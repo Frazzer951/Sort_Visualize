@@ -102,6 +102,7 @@ def main():
     update()
     sleep(1)
 
+    # Uncomment the lines for the sorting algorithm you want to use
     # threading.Thread(target=selection_sort, daemon=True).start()
     threading.Thread(target=merge_sort, daemon=True).start()
 
