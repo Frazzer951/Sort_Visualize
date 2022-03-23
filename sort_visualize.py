@@ -2,32 +2,25 @@ import pygame
 import random
 from time import sleep
 import threading
+from colour import Color
 
 pygame.init()
 WIDTH = 1000
 HEIGHT = 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-SLEEP_TIME = 0.1
-array = [x for x in range(1, 101)]
-height_value = int(0.75 * HEIGHT / max(array))
+SLEEP_TIME = 0.01
+array = [x for x in range(0, 200)]
+height_value = int(HEIGHT / max(array))
 width = WIDTH / len(array)
 start_x = 0
 start_y = HEIGHT - max(array) * height_value
 
+colors = list(Color("red").range_to(Color("blue"), len(array)))
+
 colors = [
-    (255, 0, 0),
-    (255, 127, 0),
-    (255, 255, 0),
-    (127, 255, 0),
-    (0, 255, 0),
-    (0, 255, 127),
-    (0, 255, 255),
-    (0, 127, 255),
-    (0, 0, 255),
-    (127, 0, 255),
-    (255, 0, 255),
-    (255, 0, 127),
+    (int(255 * color.red), int(255 * color.green), int(255 * color.blue))
+    for color in colors
 ]
 
 
@@ -75,13 +68,22 @@ def merge_sort(left=0, right=len(array) - 1):
         merge(left, mid, right)
 
 
+def bubble_sort():
+    n = len(array)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if array[j] > array[j + 1]:
+                array[j], array[j + 1] = array[j + 1], array[j]
+                update()
+
+
 def update():
     screen.fill((255, 255, 255))
 
     max_height = max(array) * height_value
 
     for i in range(len(array)):
-        height = array[i] * height_value
+        height = height_value + array[i] * height_value
         pygame.draw.rect(
             screen,
             colors[array[i] % len(colors)],
@@ -104,7 +106,8 @@ def main():
 
     # Uncomment the lines for the sorting algorithm you want to use
     # threading.Thread(target=selection_sort, daemon=True).start()
-    threading.Thread(target=merge_sort, daemon=True).start()
+    # threading.Thread(target=merge_sort, daemon=True).start()
+    threading.Thread(target=bubble_sort, daemon=True).start()
 
     running = True
     while running:
