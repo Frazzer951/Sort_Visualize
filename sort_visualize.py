@@ -24,7 +24,7 @@ colors = [
 ]
 
 
-def selection_sort():
+def selection_sort(array):
     sorted_index = 0
     while sorted_index < len(array) - 1:
         min_index = sorted_index
@@ -39,7 +39,7 @@ def selection_sort():
         update()
 
 
-def merge(start, mid, end):
+def merge(array, start, mid, end):
     start2 = mid + 1
     if array[mid] <= array[start2]:
         return
@@ -60,15 +60,15 @@ def merge(start, mid, end):
             start2 += 1
 
 
-def merge_sort(left=0, right=len(array) - 1):
+def merge_sort(array, left=0, right=len(array) - 1):
     if left < right:
         mid = left + (right - left) // 2
-        merge_sort(left, mid)
-        merge_sort(mid + 1, right)
-        merge(left, mid, right)
+        merge_sort(array, left, mid)
+        merge_sort(array, mid + 1, right)
+        merge(array, left, mid, right)
 
 
-def bubble_sort():
+def bubble_sort(array):
     n = len(array)
     for i in range(n):
         for j in range(0, n - i - 1):
@@ -77,7 +77,7 @@ def bubble_sort():
                 update()
 
 
-def heapify(n, i):
+def heapify(array, n, i):
     largest = i
     left = 2 * i + 1
     right = 2 * i + 2
@@ -89,17 +89,17 @@ def heapify(n, i):
     if largest != i:
         array[i], array[largest] = array[largest], array[i]
         update()
-        heapify(n, largest)
+        heapify(array, n, largest)
 
 
-def heap_sort():
+def heap_sort(array):
     n = len(array)
     for i in range(n // 2 - 1, -1, -1):
-        heapify(n, i)
+        heapify(array, n, i)
     for i in range(n - 1, 0, -1):
         array[0], array[i] = array[i], array[0]
         update()
-        heapify(i, 0)
+        heapify(array, i, 0)
 
 
 def update():
@@ -130,10 +130,10 @@ def main():
     sleep(1)
 
     # Uncomment the lines for the sorting algorithm you want to use
-    # threading.Thread(target=selection_sort, daemon=True).start()
-    # threading.Thread(target=merge_sort, daemon=True).start()
-    # threading.Thread(target=bubble_sort, daemon=True).start()
-    threading.Thread(target=heap_sort, daemon=True).start()
+    # threading.Thread(target=selection_sort, daemon=True, args=[array]).start()
+    # threading.Thread(target=merge_sort, daemon=True, args=[array]).start()
+    # threading.Thread(target=bubble_sort, daemon=True, args=[array]).start()
+    threading.Thread(target=heap_sort, daemon=True, args=[array]).start()
 
     running = True
     while running:
