@@ -10,12 +10,17 @@ WIDTH = 1000
 HEIGHT = 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-SLEEP_TIME = 0.01
-array = [x for x in range(0, 200)]
+SLEEP_TIME = 0.00
+array = [x for x in range(0, 500)]
 height_value = int(HEIGHT / max(array))
-width = WIDTH / len(array)
+width = int(WIDTH / len(array))
 start_x = 0
 start_y = HEIGHT - max(array) * height_value
+max_height = max(array) * height_value
+
+print(f"Sorting {len(array)} elements...")
+print(f"WIDTH: {WIDTH}")
+print(f"Width: {width}, Height: {height_value}")
 
 colors = list(Color("red").range_to(Color("blue"), len(array)))
 
@@ -53,7 +58,7 @@ def merge(array, start, mid, end):
 
             while index != start:
                 array[index] = array[index - 1]
-                update()
+                # update()
                 index -= 1
             array[start] = value
             update()
@@ -129,7 +134,7 @@ def insertion_sort(array):
         j = i - 1
         while j >= 0 and key < array[j]:
             array[j + 1] = array[j]
-            update()
+            # update()
             j -= 1
         array[j + 1] = key
         update()
@@ -156,24 +161,69 @@ def shell_sort(array):
         gap //= 2
 
 
-def update():
+def counting_sort(array, exp):
+    n = len(array)
+    output = [0] * n
+    count = [0] * 10
+    for i in range(0, n):
+        index = array[i] // exp
+        count[index % 10] += 1
+
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+
+    i = n - 1
+    while i >= 0:
+        index = array[i] // exp
+        output[count[index % 10] - 1] = array[i]
+        update(output)
+        count[index % 10] -= 1
+        i -= 1
+
+    for i in range(0, n):
+        array[i] = output[i]
+        update(output)
+
+
+def radix_sort(array):
+    max1 = max(array)
+    exp = 1
+    while max1 / exp > 1:
+        counting_sort(array, exp)
+        exp *= 10
+
+
+def update(secondary=None):
     screen.fill((255, 255, 255))
-
-    max_height = max(array) * height_value
-
+    multiplier = 0.5 if secondary else 1
+    height_offset = HEIGHT // 2 if secondary else 0
     for i in range(len(array)):
-        height = height_value + array[i] * height_value
+        height = ((array[i] + 1) * height_value) * multiplier
+        height = int(height)
         pygame.draw.rect(
             screen,
             colors[array[i] % len(colors)],
             pygame.Rect(
                 start_x + i * width,
-                start_y + max_height - height,
+                start_y + max_height - height - height_offset,
                 width,
                 height,
             ),
         )
-
+    if secondary:
+        for i in range(len(secondary)):
+            height = ((secondary[i] + 1) * height_value) * multiplier
+            height = int(height)
+            pygame.draw.rect(
+                screen,
+                colors[secondary[i] % len(colors)],
+                pygame.Rect(
+                    start_x + i * width,
+                    start_y + max_height - height,
+                    width,
+                    height,
+                ),
+            )
     pygame.display.flip()
     sleep(SLEEP_TIME)
 
@@ -181,6 +231,7 @@ def update():
 def main():
     random.shuffle(array)
     # array.reverse()
+    print("Array Initialized")
     update()
     sleep(1)
 
@@ -190,8 +241,11 @@ def main():
     # threading.Thread(target=selection_sort, daemon=True, args=[array]).start()
     # threading.Thread(target=insertion_sort, daemon=True, args=[array]).start()
     # threading.Thread(target=heap_sort, daemon=True, args=[array]).start()
-    threading.Thread(target=shell_sort, daemon=True, args=[array]).start()
+    # threading.Thread(target=shell_sort, daemon=True, args=[array]).start()
     # threading.Thread(target=merge_sort, daemon=True, args=[array]).start()
+    threading.Thread(target=radix_sort, daemon=True, args=[array]).start()
+
+    print("Sorting Started")
 
     running = True
     while running:
