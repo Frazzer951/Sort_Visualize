@@ -31,28 +31,6 @@ colors = [
 ]
 
 
-def update():
-    screen.fill((255, 255, 255))
-
-    max_height = max(array) * height_value
-
-    for i in range(len(array)):
-        height = array[i] * height_value
-        pygame.draw.rect(
-            screen,
-            colors[array[i] % len(colors)],
-            pygame.Rect(
-                start_x + i * width,
-                start_y + max_height - height,
-                width,
-                height,
-            ),
-        )
-
-    pygame.display.flip()
-    sleep(SLEEP_TIME)
-
-
 def selection_sort():
     sorted_index = 0
     while sorted_index < len(array) - 1:
@@ -95,6 +73,28 @@ def merge_sort(left=0, right=len(array) - 1):
         merge_sort(left, mid)
         merge_sort(mid + 1, right)
         merge(left, mid, right)
+
+
+def update():
+    screen.fill((255, 255, 255))
+
+    max_height = max(array) * height_value
+
+    for i in range(len(array)):
+        height = array[i] * height_value
+        pygame.draw.rect(
+            screen,
+            colors[array[i] % len(colors)],
+            pygame.Rect(
+                start_x + i * width,
+                start_y + max_height - height,
+                width,
+                height,
+            ),
+        )
+
+    pygame.display.flip()
+    sleep(SLEEP_TIME)
 
 
 def main():
