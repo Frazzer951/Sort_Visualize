@@ -77,6 +77,31 @@ def bubble_sort():
                 update()
 
 
+def heapify(n, i):
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    if left < n and array[largest] < array[left]:
+        largest = left
+    if right < n and array[largest] < array[right]:
+        largest = right
+
+    if largest != i:
+        array[i], array[largest] = array[largest], array[i]
+        update()
+        heapify(n, largest)
+
+
+def heap_sort():
+    n = len(array)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(n, i)
+    for i in range(n - 1, 0, -1):
+        array[0], array[i] = array[i], array[0]
+        update()
+        heapify(i, 0)
+
+
 def update():
     screen.fill((255, 255, 255))
 
@@ -107,7 +132,8 @@ def main():
     # Uncomment the lines for the sorting algorithm you want to use
     # threading.Thread(target=selection_sort, daemon=True).start()
     # threading.Thread(target=merge_sort, daemon=True).start()
-    threading.Thread(target=bubble_sort, daemon=True).start()
+    # threading.Thread(target=bubble_sort, daemon=True).start()
+    threading.Thread(target=heap_sort, daemon=True).start()
 
     running = True
     while running:
