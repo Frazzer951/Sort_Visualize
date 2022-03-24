@@ -161,23 +161,23 @@ def shell_sort(array):
         gap //= 2
 
 
-def counting_sort(array, exp):
+def counting_sort(array, exp, d=10):
     n = len(array)
     output = [0] * n
-    count = [0] * 10
+    count = [0] * d
     for i in range(0, n):
         index = array[i] // exp
-        count[index % 10] += 1
+        count[index % d] += 1
 
-    for i in range(1, 10):
+    for i in range(1, d):
         count[i] += count[i - 1]
 
     i = n - 1
     while i >= 0:
         index = array[i] // exp
-        output[count[index % 10] - 1] = array[i]
+        output[count[index % d] - 1] = array[i]
         update(output)
-        count[index % 10] -= 1
+        count[index % d] -= 1
         i -= 1
 
     for i in range(0, n):
@@ -185,12 +185,13 @@ def counting_sort(array, exp):
         update(output)
 
 
-def radix_sort(array):
+def radix_sort(array, base=10):
     max1 = max(array)
     exp = 1
     while max1 / exp > 1:
-        counting_sort(array, exp)
-        exp *= 10
+        counting_sort(array, exp, base)
+        exp *= base
+    update()
 
 
 def update(secondary=None):
@@ -243,7 +244,7 @@ def main():
     # threading.Thread(target=heap_sort, daemon=True, args=[array]).start()
     # threading.Thread(target=shell_sort, daemon=True, args=[array]).start()
     # threading.Thread(target=merge_sort, daemon=True, args=[array]).start()
-    threading.Thread(target=radix_sort, daemon=True, args=[array]).start()
+    threading.Thread(target=radix_sort, daemon=True, args=[array, 16]).start()
 
     print("Sorting Started")
 
