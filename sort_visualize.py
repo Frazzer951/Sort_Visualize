@@ -194,6 +194,38 @@ def radix_sort(array, base=10):
     update()
 
 
+def counting_sort_by_digit(array, radix, exponent, minValue):
+    bucket_index = -1
+    buckets = [0] * radix
+    output = [0] * len(array)
+    for i in range(len(array)):
+        bucket_index = int(((array[i] - minValue) / exponent) % radix)
+        buckets[bucket_index] += 1
+    for i in range(1, radix):
+        buckets[i] += buckets[i - 1]
+
+    for i in range(len(array) - 1, -1, -1):
+        bucketIndex = int(((array[i] - minValue) / exponent) % radix)
+        buckets[bucketIndex] -= 1
+        output[buckets[bucketIndex]] = array[i]
+        update(output)
+
+    for i in range(len(array)):
+        array[i] = output[i]
+        # update(output)
+
+
+def radix_sort_lsd(array, radix=10):
+    min_value = min(array)
+    max_value = max(array)
+    exponent = 1
+    while (max_value - min_value) / exponent >= 1:
+        counting_sort_by_digit(array, radix, exponent, min_value)
+        # update()
+        exponent *= radix
+    update()
+
+
 def update(secondary=None):
     screen.fill((255, 255, 255))
     multiplier = 0.5 if secondary else 1
@@ -244,7 +276,8 @@ def main():
     # threading.Thread(target=heap_sort, daemon=True, args=[array]).start()
     # threading.Thread(target=shell_sort, daemon=True, args=[array]).start()
     # threading.Thread(target=merge_sort, daemon=True, args=[array]).start()
-    threading.Thread(target=radix_sort, daemon=True, args=[array, 16]).start()
+    # threading.Thread(target=radix_sort, daemon=True, args=[array, 16]).start()
+    threading.Thread(target=radix_sort_lsd, daemon=True, args=[array, 10]).start()
 
     print("Sorting Started")
 
